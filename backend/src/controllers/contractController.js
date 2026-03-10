@@ -130,34 +130,3 @@ export const getContractById = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
-
-// ### Poora flow ek nazar mein:
-// ```
-// Request aaya (id + new data)
-//         ↓
-// MongoDB mein ID se dhundha
-//         ↓
-//     Mila?
-//    ↙      ↘
-// Nahi       Haan
-//   ↓          ↓
-// 404        Update karo
-//          (validators bhi chalao)
-//               ↓
-//          Naya document
-//          wapas bhejo (200)
-
-// ### Poora flow:
-// ```
-// DELETE request aaya (id)
-//         ↓
-// MongoDB mein ID se dhundha
-//         ↓
-//     Mila?
-//    ↙      ↘
-// Nahi       Haan
-//   ↓          ↓
-// 404        Delete karo
-//              ↓
-//          Success message
-//          bhejo (200)

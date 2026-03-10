@@ -51,10 +51,6 @@ const ContractPage = () => {
     enabled: !!pageData?._id, // jab tak pageData nahi aata tab tak contracts API run nahi hogi
   });
 
-  ////////
-
-  /////////////
-
   if (pageLoading || contractsLoading)
     return (
       <div className="flex items-center justify-center h-full text-slate-500">
@@ -208,23 +204,3 @@ const ContractPage = () => {
 };
 
 export default ContractPage;
-
-// User open page
-//       ↓
-// URL /pages/all-contracts
-//       ↓
-// useParams → url
-//       ↓
-// React Query
-//       ↓
-// GET /api/pages?url=all-contracts
-//       ↓
-// pageId mila
-//       ↓
-// GET /api/contracts?pageId=123
-//       ↓
-// Contracts list
-//       ↓
-// Search filter
-//       ↓
-// Table render

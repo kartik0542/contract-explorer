@@ -18,16 +18,4 @@ createRoot(document.getElementById("root")).render(
       </QueryClientProvider>
     </BrowserRouter>
   </StrictMode>
-);  
-
-// StrictMode
-//    ↓
-// BrowserRouter
-//    ↓
-// QueryClientProvider
-//    ↓
-// PageProvider
-//    ↓
-// App
-//    ↓
-// All Components
+);

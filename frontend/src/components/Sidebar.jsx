@@ -3,29 +3,17 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getAllPages } from "../services/api";
 import { usePage } from "../context/PageContext";
 import CreatePageModal from "./CreatePageModal";
-// import EditPageModal from "./EditPageModal";
-// import { useMutation, useQueryClient } from "@tanstack/react-query";
-// import { deletePage } from "../services/api.js";
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const { url } = useParams();
   const { setActivePage } = usePage();
-  // const queryClient = useQueryClient();
 
   // TanStack Query se pages fetch karo
   const { data, isLoading, isError } = useQuery({
     queryKey: ["pages"],
     queryFn: () => getAllPages().then((res) => res.data.data),
   });
-
-  // const { mutate: deletePageMutate } = useMutation({
-  //   mutationFn: (id) => deletePage(id),
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ["pages"] });
-  //     navigate("/pages/all-contracts");
-  //   },
-  // });
 
   if (isLoading) return <div className="p-4 text-slate-400">Loading...</div>;
   if (isError)
@@ -64,17 +52,6 @@ const Sidebar = () => {
             >
               ℹ️
             </button>
-            {/* <EditPageModal page={page} />
-            <button
-              onClick={() => {
-                if (window.confirm("Page delete karna hai?")) {
-                  deletePageMutate(page._id);
-                }
-              }}
-              className="text-slate-400 hover:text-red-400 text-xs"
-            >
-              🗑️
-            </button> */}
           </div>
         ))}
       </nav>
@@ -88,23 +65,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
-// Sidebar Load
-//       ↓
-// useQuery API call
-//       ↓
-// GET /api/pages
-//       ↓
-// Pages data return
-//       ↓
-// map() loop
-//       ↓
-// Buttons create
-//       ↓
-// User click
-//       ↓
-// setActivePage()
-//       ↓
-// navigate()
-//       ↓
-// New page open
