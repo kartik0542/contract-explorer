@@ -128,7 +128,6 @@ Frontend chalega: `http://localhost:5173`
 | GET | `/api/contracts?pageId=123` | Page filters se contracts lao |
 | GET | `/api/contracts?contractType=SOW` | Type se filter karo |
 | GET | `/api/contracts?status=Processed` | Status se filter karo |
-| GET | `/api/contracts?minAmount=1000&maxAmount=50000` | Amount range se filter karo |
 | GET | `/api/contracts/:id` | ID se contract lao |
 | POST | `/api/contracts` | Naya contract banao |
 | PUT | `/api/contracts/:id` | Contract update karo |
