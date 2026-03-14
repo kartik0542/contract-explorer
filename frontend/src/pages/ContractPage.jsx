@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const CONTRACT_TYPES = [
   "All",
@@ -32,6 +32,8 @@ const ContractPage = () => {
   const [activeStatus, setActiveStatus] = useState("All");
   const [minAmount, setMinAmount] = useState("");
   const [maxAmount, setMaxAmount] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   // Step 1: URL se Page config fetch karo
   const { data: pageData, isLoading: pageLoading } = useQuery({
@@ -51,6 +53,10 @@ const ContractPage = () => {
     enabled: !!pageData?._id, // jab tak pageData nahi aata tab tak contracts API run nahi hogi
   });
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, activeType, activeStatus, minAmount, maxAmount]);
+
   if (pageLoading || contractsLoading)
     return (
       <div className="flex items-center justify-center h-full text-slate-500">
@@ -67,6 +73,12 @@ const ContractPage = () => {
     const matchMax = maxAmount === "" || c.amount <= Number(maxAmount);
     return matchSearch && matchType && matchStatus && matchMin && matchMax;
   });
+
+  const totalPages = Math.ceil((filtered?.length || 0) / itemsPerPage);
+  const paginated = filtered?.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
 
   // Status badge color
   const getStatusColor = (status) => {
@@ -173,7 +185,7 @@ const ContractPage = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              filtered?.map((contract) => (
+              paginated?.map((contract) => (
                 <TableRow key={contract._id}>
                   <TableCell
                     className="font-medium text-blue-600 cursor-pointer hover:underline"
@@ -198,6 +210,42 @@ const ContractPage = () => {
             )}
           </TableBody>
         </Table>
+      </div>
+      {/* Pagination */}
+      <div className="flex items-center justify-between mt-4 px-2 gap-4">
+        <p className="text-sm text-slate-500">
+          Total: {filtered?.length || 0} contracts
+        </p>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            ← Prev
+          </Button>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <Button
+              key={page}
+              size="sm"
+              variant={currentPage === page ? "default" : "outline"}
+              onClick={() => setCurrentPage(page)}
+            >
+              {page}
+            </Button>
+          ))}
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            Next →
+          </Button>
+        </div>
       </div>
     </div>
   );

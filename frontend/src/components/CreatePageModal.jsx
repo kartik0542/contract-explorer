@@ -10,6 +10,73 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { X } from "lucide-react";
+
+const CONTRACT_TYPES = [
+  "SOW",
+  "Amendment",
+  "Master Agreement",
+  "Service Agreement",
+];
+const STATUSES = ["Processed", "Pending", "Draft", "Rejected"];
+
+const TagSelect = ({ label, options, selected, onChange }) => {
+  const handleAdd = (e) => {
+    const val = e.target.value;
+    if (val && !selected.includes(val)) {
+      onChange([...selected, val]);
+    }
+    e.target.value = "";
+  };
+
+  const handleRemove = (val) => {
+    onChange(selected.filter((v) => v !== val));
+  };
+
+  return (
+    <div>
+      <label className="text-sm font-medium text-slate-700">{label}</label>
+
+      {/* Selected Tags */}
+      {selected.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-1 mb-1">
+          {selected.map((val) => (
+            <span
+              key={val}
+              className="flex items-center gap-1 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
+            >
+              {val}
+              <button
+                onClick={() => handleRemove(val)}
+                className="hover:text-blue-600"
+              >
+                <X size={12} />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Dropdown */}
+      <select
+        onChange={handleAdd}
+        defaultValue=""
+        className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 mt-1"
+      >
+        <option value="" disabled>
+          -- Select --
+        </option>
+        {options
+          .filter((opt) => !selected.includes(opt))
+          .map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+      </select>
+    </div>
+  );
+};
 
 const CreatePageModal = () => {
   const [open, setOpen] = useState(false);
@@ -17,8 +84,9 @@ const CreatePageModal = () => {
     title: "",
     url: "",
     rank: "",
-    filters: "",
   });
+  const [contractTypes, setContractTypes] = useState([]);
+  const [statuses, setStatuses] = useState([]);
 
   const queryClient = useQueryClient();
 
@@ -27,38 +95,37 @@ const CreatePageModal = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pages"] });
       setOpen(false);
-      setForm({ title: "", url: "", rank: "", filters: "" });
+      setForm({ title: "", url: "", rank: "" });
+      setContractTypes([]);
+      setStatuses([]);
     },
     onError: (err) => {
       alert(err.response?.data?.message || "Error creating page");
-    }
+    },
   });
 
   const handleSubmit = () => {
     if (!form.title || !form.url) return alert("Title aur URL required hai!");
 
-    // filters ko parse karo agar likha ho
-    let parsedFilters = {};
-    if (form.filters) {
-      try {
-        parsedFilters = JSON.parse(form.filters);
-      } catch {
-        return alert("Filters valid JSON hona chahiye!\nExample: {\"contractType\": [\"SOW\"]}");
-      }
-    }
+    // Filters automatically build hoga dropdowns se
+    const filters = {};
+    if (contractTypes.length > 0) filters.contractType = contractTypes;
+    if (statuses.length > 0) filters.status = statuses;
 
     mutate({
       title: form.title,
       url: form.url,
       rank: Number(form.rank) || 0,
-      filters: parsedFilters,
+      filters, // { contractType: ["SOW"], status: ["Processed", "Pending"] }
     });
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" className="w-full mt-2">+ Add Page</Button>
+        <Button size="sm" className="w-full mt-2">
+          + Add Page
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -88,7 +155,9 @@ const CreatePageModal = () => {
 
           {/* Rank */}
           <div>
-            <label className="text-sm font-medium text-slate-700">Rank (sidebar order)</label>
+            <label className="text-sm font-medium text-slate-700">
+              Rank (sidebar order)
+            </label>
             <Input
               type="number"
               placeholder="1"
@@ -97,23 +166,28 @@ const CreatePageModal = () => {
             />
           </div>
 
-          {/* Filters */}
-          <div>
-            <label className="text-sm font-medium text-slate-700">
-              Filters (JSON format)
-            </label>
-            <Input
-              placeholder='{"contractType": ["SOW"]}'
-              value={form.filters}
-              onChange={(e) => setForm({ ...form, filters: e.target.value })}
-            />
-            <p className="text-xs text-slate-400 mt-1">
-              Khaali chhodo agar koi filter nahi chahiye
-            </p>
-          </div>  
+          {/* Contract Type Dropdown */}
+          <TagSelect
+            label="Contract Type"
+            options={CONTRACT_TYPES}
+            selected={contractTypes}
+            onChange={setContractTypes}
+          />
+
+          {/* Status Dropdown */}
+          <TagSelect
+            label="Status"
+            options={STATUSES}
+            selected={statuses}
+            onChange={setStatuses}
+          />
 
           {/* Submit */}
-          <Button onClick={handleSubmit} disabled={isPending} className="w-full">
+          <Button
+            onClick={handleSubmit}
+            disabled={isPending}
+            className="w-full"
+          >
             {isPending ? "Saving..." : "Create Page"}
           </Button>
         </div>
