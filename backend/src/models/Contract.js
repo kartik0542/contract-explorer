@@ -10,7 +10,7 @@ const ContractSchema = new mongoose.Schema(
     contractType: {
       type: String,
       required: [true, "Contract type is required"],
-      enum: ["SOW", "Master Agreement", "Amendment", "Service Agreement"], // sirf yahi values allowed hain
+      enum: ["SOW", "Master Agreement", "Amendment", "Service Agreement"],
     },
     amount: {
       type: Number,
