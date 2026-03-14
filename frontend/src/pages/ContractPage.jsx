@@ -49,6 +49,8 @@ const ContractPage = () => {
         pageId: pageData._id,
         contractType: activeType !== "All" ? activeType : undefined,
         status: activeStatus !== "All" ? activeStatus : undefined,
+        minAmount: minAmount || undefined, // ✅ add karo
+        maxAmount: maxAmount || undefined, // ✅ add karo
       }).then((res) => res.data.data),
     enabled: !!pageData?._id, // jab tak pageData nahi aata tab tak contracts API run nahi hogi
   });
