@@ -59,7 +59,7 @@ const CreateContractModal = () => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New Contract Banao</DialogTitle>
+          <DialogTitle>Add New Contract</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-3 mt-2">

@@ -129,7 +129,7 @@ const CreatePageModal = () => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Naya Page Banao</DialogTitle>
+          <DialogTitle>Add New Page</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-3 mt-2">
